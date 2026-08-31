@@ -1,7 +1,7 @@
 import "./App.css";
 
 // import { TaskList, TaskSummary } from "./components/";
-import { SpaceInvaders, RetroPlatformer } from "./components/";
+import { SpaceInvaders, RetroPlatformer, PacMan } from "./components/";
 
 function App() {
   return (
@@ -10,6 +10,7 @@ function App() {
       {/* <TaskList /> */}
       <SpaceInvaders />
       <RetroPlatformer />
+      <PacMan />
     </>
   );
 }
