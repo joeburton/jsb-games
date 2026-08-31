@@ -1,75 +1,81 @@
-# React + TypeScript + Vite
+# 🕹️ JSB Games
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A tiny arcade cabinet that lives in your browser. Pixel sprites, chiptune vibes,
+> and three certified classics rebuilt from scratch in React + TypeScript.
 
-Currently, two official plugins are available:
+Insert coin. No coin? That's fine, it's free. 🪙
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🎮 What's in the cabinet
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Game | The pitch | Controls |
+| --- | --- | --- |
+| 👾 **Space Invaders** | Rows of wiggling aliens march toward Earth and it's just you and a laser cannon. Clear a wave, the next one comes faster and shoots meaner. | `←` `→` move · `Space` shoot |
+| 🍄 **Retro Platformer** | Run, jump, stomp, collect coins, reach the flag. Coyote-time and jump-buffering included so the platforming actually feels good. | `←` `→` / `A` `D` move · `Space` / `↑` / `W` jump |
+| 🟡 **Pac-Man** | Eat every pellet, dodge four ghosts with real scatter/chase personalities, and munch a power pellet to turn the tables. | Arrow keys / `WASD` move |
 
-## Expanding the ESLint configuration
+Every game keeps a **level counter** that ratchets up the difficulty, gives you
+**3 lives**, and drops a big **restart button** on the game-over screen. Pixel art
+and animation frames are hand-coded strings of `0`s and `1`s, because of course
+they are.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Quick start
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL Vite prints, mash the keyboard, have fun.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🛠️ Scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server with HMR |
+| `npm run build` | Type-check with `tsc` and build for production |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint over the project |
+| `npm test` | Run the Vitest suite once |
+| `npm run test:watch` | Run Vitest in watch mode |
+
+---
+
+## 🧰 Built with
+
+- **React 19** + **TypeScript** + **Vite** — the app shell and tooling
+- **`<canvas>` + `requestAnimationFrame`** — every game is its own little render loop
+- **Redux Toolkit** + **react-redux** — wired up and ready (see the easter egg below)
+- **Vitest** + **Testing Library** — the tests that keep the maze walls standing
+
+---
+
+## 🥚 Easter egg
+
+There's a fully working little **task manager** hiding in `src/components`
+(`TaskList`, `AddTask`, `TaskFilter`, `TaskSummary`) backed by a Redux store. It's
+commented out in [src/App.tsx](src/App.tsx) — swap the imports back in if you'd
+rather organize your day than save the galaxy. We won't judge. Much.
+
+---
+
+## 📁 Project layout
 
 ```
+src/
+├── App.tsx                 # picks which games to mount
+├── components/
+│   ├── SpaceInvaders/      # 👾
+│   ├── RetroPlatformer/    # 🍄
+│   ├── PacMan/             # 🟡
+│   └── TaskList, AddTask…  # 🥚 the hidden productivity app
+├── store/                  # Redux Toolkit slices + selectors
+└── data/                   # seed data
+```
+
+Now go get a high score. 🏆
