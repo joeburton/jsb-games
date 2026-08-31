@@ -1,0 +1,60 @@
+.taskList {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 32px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.taskList ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.taskList ul li.taskItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-h);
+  transition: background 0.2s;
+}
+
+.taskList ul li.taskItem:hover {
+  background: var(--accent-bg);
+}
+
+.taskList ul li.taskItem::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.taskList ul li.taskItem.completed {
+  color: var(--text);
+  text-decoration: line-through;
+}
+
+.taskList ul li.taskItem.completed::before {
+  content: "✓";
+  background: var(--accent);
+  border-color: var(--accent);
+}

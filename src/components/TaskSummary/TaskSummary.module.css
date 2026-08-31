@@ -1,0 +1,36 @@
+.taskSummaryContainer {
+  width: 100%;
+  max-width: 420px;
+  margin: 16px auto 16px auto;
+  padding: 10px 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.taskSummary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: 5px;
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.count:hover {
+  border-color: var(--accent-border);
+}
