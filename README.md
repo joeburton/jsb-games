@@ -22,6 +22,27 @@ they are.
 
 ---
 
+## 🖥️ The cabinet
+
+The games live inside a small designed site shell (all in `src/site/`):
+
+- **Mobile-first, fully responsive** — one column on a phone, two up on a tablet,
+  three across on desktop, with a sticky neon nav bar.
+- **Arcade / synthwave theme** — CRT scanlines, an aurora glow, a perspective
+  grid floor, `Press Start 2P` marquees and a `Chakra Petch` body face. Each game
+  gets its own accent colour (Invaders green, Platformer cyan, Pac-Man yellow)
+  that flows through its cabinet, buttons and nav pill.
+- **Hash routing** — `#/` is the arcade, `#/game/<id>` is a game. No router
+  dependency; see [src/site/useHashRoute.ts](src/site/useHashRoute.ts).
+- **On-screen touch pad** — the games are keyboard-built, so
+  [src/site/TouchControls.tsx](src/site/TouchControls.tsx) renders a D-pad that
+  synthesises the same `keydown` / `keyup` events, making every game playable by
+  thumb. Toggle it under the screen.
+- **Game metadata** (pitch, controls, field notes, specs) is one registry in
+  [src/site/games.ts](src/site/games.ts).
+
+---
+
 ## 🚀 Quick start
 
 ```bash
@@ -68,7 +89,12 @@ rather organize your day than save the galaxy. We won't judge. Much.
 
 ```
 src/
-├── App.tsx                 # picks which games to mount
+├── App.tsx                 # routes: arcade home vs. a single game
+├── site/                   # the designed cabinet shell
+│   ├── NavBar / Home / GameScreen
+│   ├── TouchControls.tsx   # on-screen D-pad → synthetic key events
+│   ├── games.ts            # game registry (pitch, controls, accent…)
+│   └── useHashRoute.ts     # dependency-free hash router
 ├── components/
 │   ├── SpaceInvaders/      # 👾
 │   ├── RetroPlatformer/    # 🍄
