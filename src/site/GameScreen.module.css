@@ -1,0 +1,245 @@
+.wrap {
+  --accent: var(--neon-purple);
+  --game-glow: rgba(198, 92, 255, 0.5);
+  padding-top: clamp(12px, 3vw, 24px);
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.back:hover {
+  color: var(--text-h);
+  border-color: var(--accent);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  margin-top: 18px;
+}
+
+/* ---------- Cabinet ---------- */
+.cabinet {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.28)),
+    var(--panel);
+  overflow: hidden;
+  box-shadow: 0 30px 70px -34px var(--game-glow);
+}
+
+.marquee {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: linear-gradient(90deg, var(--accent), transparent 88%);
+  color: #07060d;
+}
+
+.emoji {
+  font-size: 26px;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
+}
+
+.title {
+  flex: 1;
+  font-family: var(--display);
+  font-size: clamp(13px, 3.4vw, 20px);
+  letter-spacing: 0.5px;
+}
+
+.year {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(7, 6, 13, 0.25);
+}
+
+.stage {
+  padding: clamp(14px, 3.5vw, 26px);
+  background:
+    radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+    #05040c;
+}
+
+/* Neutralise each game's own card chrome so the cabinet is the frame. */
+.stage > div {
+  max-width: 460px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.stage :global(h2) {
+  display: none;
+}
+
+.padZone {
+  padding: 0 clamp(14px, 3.5vw, 26px) clamp(16px, 3.5vw, 24px);
+}
+
+.padToggle {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  padding: 7px 11px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.padToggle:hover {
+  color: var(--text-h);
+  border-color: var(--accent);
+}
+
+/* ---------- Info panel ---------- */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--panel);
+}
+
+.cardTitle {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.blurb {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.controlList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.controlList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.keys {
+  flex-shrink: 0;
+  min-width: 96px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-h);
+  padding: 5px 9px;
+  border: 1px solid var(--line-bright);
+  border-radius: 7px;
+  background: var(--panel-3);
+  text-align: center;
+}
+
+.padNote,
+.tips li {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.padNote {
+  margin-top: 10px;
+}
+
+.tips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tips li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--text);
+}
+
+.tips li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+.specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+
+.specs > div {
+  flex: 1 1 100px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: var(--panel-2);
+}
+
+.specs dt {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.specs dd {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+@media (min-width: 980px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.55fr) minmax(280px, 1fr);
+    align-items: start;
+  }
+  .panel {
+    position: sticky;
+    top: 76px;
+  }
+}

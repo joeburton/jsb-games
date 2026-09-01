@@ -1,0 +1,36 @@
+.missing {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  padding: 80px 0;
+}
+
+.glitch {
+  font-family: var(--display);
+  font-size: clamp(48px, 16vw, 110px);
+  color: var(--text-h);
+  text-shadow:
+    3px 0 var(--neon-pink),
+    -3px 0 var(--neon-cyan);
+  animation: blink 1.2s steps(1) infinite;
+}
+
+.missing h1 {
+  font-family: var(--display);
+  font-size: clamp(14px, 4vw, 22px);
+}
+
+.home {
+  margin-top: 14px;
+  font-family: var(--display);
+  font-size: 12px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  color: #07060d;
+  background: var(--accent-2);
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.4);
+}
