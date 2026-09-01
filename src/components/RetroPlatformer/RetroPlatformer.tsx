@@ -527,6 +527,11 @@ const RetroPlatformer = () => {
   useEffect(() => {
     if (status !== "playing") return;
 
+    // Drop any keys still held from the previous screen (e.g. running into the
+    // flag) so a new level doesn't start auto-scrolling until you tap that key.
+    keysRef.current.clear();
+    gameRef.current.jumpPressed = false;
+
     const level = LEVELS[levelIndex];
     const enemySpeedMul = LEVEL_CONFIGS[levelIndex].enemySpeedMul;
     const worldWidth = level.width * TILE;
@@ -840,6 +845,9 @@ const RetroPlatformer = () => {
       cancelAnimationFrame(frameRef.current);
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      // Listeners are gone now, so a keyup during the between-levels overlay
+      // would never be recorded — forget everything that was held.
+      keysRef.current.clear();
     };
   }, [status, levelIndex]);
 
