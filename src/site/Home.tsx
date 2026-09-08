@@ -6,7 +6,8 @@ const Home = () => {
     <main className={styles.home}>
       <section className={styles.hero}>
         <p className={styles.kicker}>
-          <span className={styles.dot} /> Now playing · est. no year in particular
+          <span className={styles.dot} /> Now playing · est. no year in
+          particular
         </p>
         <h1 className={styles.title}>
           JSB<span className={styles.title2}>GAMES</span>
@@ -38,7 +39,7 @@ const Home = () => {
           </div>
           <div>
             <b>0</b>
-            <span>quarters</span>
+            <span>cost</span>
           </div>
         </div>
       </section>
@@ -57,7 +58,9 @@ const Home = () => {
             }
           >
             <div className={styles.marquee}>
-              <span className={styles.slot}>{String(i + 1).padStart(2, "0")}</span>
+              <span className={styles.slot}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
               <span className={styles.marqueeName}>{game.title}</span>
             </div>
 
@@ -98,8 +101,9 @@ const Home = () => {
           <code>requestAnimationFrame</code>, and no external game engine.
         </p>
         <p className={styles.egg}>
-          🥚 There's a working task manager hiding in <code>src/components</code>.
-          Swap the imports if you'd rather organise your day than save the galaxy.
+          🥚 There's a working task manager hiding in{" "}
+          <code>src/components</code>. Swap the imports if you'd rather organise
+          your day than save the galaxy.
         </p>
       </footer>
     </main>
