@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import { SpaceInvaders, RetroPlatformer, PacMan } from "../components";
+import { SpaceInvaders, RetroPlatformer, PacMan, Asteroids } from "../components";
 
 export interface ControlHint {
   keys: string;
@@ -107,6 +107,33 @@ export const GAMES: GameMeta[] = [
     ],
     pad: { dpad: "full" },
     Component: PacMan,
+  },
+  {
+    id: "asteroids",
+    title: "Asteroids",
+    emoji: "☄️",
+    tagline: "A lone ship, a drifting rock field and a very twitchy trigger finger.",
+    blurb:
+      "Big rocks split into medium ones, medium into small, small into dust. There's no brake, so every burst of thrust stays with you. Each wave brings more rocks and faster drift, and every 10,000 points earns a spare ship.",
+    accent: "#ff3db0",
+    glow: "rgba(255, 61, 176, 0.55)",
+    year: "1979",
+    players: "1P",
+    genre: "Multidirectional shooter",
+    difficulty: "More rocks every wave",
+    controls: [
+      { keys: "← →  /  A D", action: "Rotate" },
+      { keys: "↑ / W", action: "Thrust" },
+      { keys: "Space", action: "Fire" },
+      { keys: "↓ / S", action: "Hyperspace" },
+    ],
+    tips: [
+      "Tap thrust in short bursts; there's no brake, only drag.",
+      "Shatter the big rocks early, before the fragments fill the sky.",
+      "Hyperspace is a panic button. You might land somewhere worse.",
+    ],
+    pad: { dpad: "full", action: { code: "Space", label: "Fire" } },
+    Component: Asteroids,
   },
 ];
 

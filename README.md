@@ -1,7 +1,7 @@
 # 🕹️ JSB Games
 
 > A tiny arcade cabinet that lives in your browser. Pixel sprites, chiptune vibes,
-> and three certified classics rebuilt from scratch in React + TypeScript.
+> and four certified classics rebuilt from scratch in React + TypeScript.
 
 Insert coin. No coin? That's fine, it's free. 🪙
 
@@ -14,6 +14,7 @@ Insert coin. No coin? That's fine, it's free. 🪙
 | 👾 **Space Invaders** | Rows of wiggling aliens march toward Earth and it's just you and a laser cannon. Clear a wave, the next one comes faster and shoots meaner. | `←` `→` move · `Space` shoot |
 | 🍄 **Retro Platformer** | Run, jump, stomp, collect coins, reach the flag. Coyote-time and jump-buffering included so the platforming actually feels good. | `←` `→` / `A` `D` move · `Space` / `↑` / `W` jump |
 | 🟡 **Pac-Man** | Eat every pellet, dodge four ghosts with real scatter/chase personalities, and munch a power pellet to turn the tables. | Arrow keys / `WASD` move |
+| ☄️ **Asteroids** | Rotate, thrust and blast a drifting rock field into ever-smaller pieces. No brakes, just drag, plus a hyperspace panic button. | `←` `→` rotate · `↑` thrust · `Space` fire · `↓` hyperspace |
 
 Every game keeps a **level counter** that ratchets up the difficulty, gives you
 **3 lives**, and drops a big **restart button** on the game-over screen. Pixel art
@@ -30,7 +31,7 @@ The games live inside a small designed site shell (all in `src/site/`):
   three across on desktop, with a sticky neon nav bar.
 - **Arcade / synthwave theme** — CRT scanlines, an aurora glow, a perspective
   grid floor, `Press Start 2P` marquees and a `Chakra Petch` body face. Each game
-  gets its own accent colour (Invaders green, Platformer cyan, Pac-Man yellow)
+  gets its own accent colour (Invaders green, Platformer cyan, Pac-Man yellow, Asteroids pink)
   that flows through its cabinet, buttons and nav pill.
 - **Hash routing** — `#/` is the arcade, `#/game/<id>` is a game. No router
   dependency; see [src/site/useHashRoute.ts](src/site/useHashRoute.ts).
@@ -100,6 +101,7 @@ src/
 │   ├── SpaceInvaders/      # 👾
 │   ├── RetroPlatformer/    # 🍄
 │   ├── PacMan/             # 🟡
+│   ├── Asteroids/          # ☄️
 │   ├── shared/             # GameFrame (HUD + overlay), rAF loop, sprite/collision helpers
 │   └── TaskList, AddTask…  # 🥚 the hidden productivity app
 ├── store/                  # Redux Toolkit slices + selectors

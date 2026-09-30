@@ -16,7 +16,7 @@ const Home = () => {
           A tiny arcade cabinet that lives in your browser
         </p>
         <p className={styles.lede}>
-          Three certified classics, rebuilt from scratch in React + TypeScript.
+          Four certified classics, rebuilt from scratch in React + TypeScript.
           Pixel sprites hand-coded as strings of <code>0</code>s and{" "}
           <code>1</code>s. Chiptune vibes sold separately.
         </p>
@@ -26,7 +26,7 @@ const Home = () => {
         </p>
         <div className={styles.stats}>
           <div>
-            <b>3</b>
+            <b>{GAMES.length}</b>
             <span>games</span>
           </div>
           <div>
