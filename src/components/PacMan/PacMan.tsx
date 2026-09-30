@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import GameFrame from "../shared/GameFrame";
+import { startLoop } from "../shared/loop";
 import styles from "./PacMan.module.css";
 
 const W = 21;
@@ -451,8 +453,6 @@ const drawGhost = (
 const PacMan = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameRef = useRef<GameState>(createGameState());
-  const frameRef = useRef<number>(0);
-  const lastTimeRef = useRef<number>(0);
 
   const [status, setStatus] = useState<GameStatus>("idle");
   const [score, setScore] = useState(0);
@@ -561,16 +561,12 @@ const PacMan = () => {
       }
     };
 
-    const tick = (time: number) => {
-      const dt = lastTimeRef.current
-        ? Math.min(50, time - lastTimeRef.current)
-        : 0;
-      lastTimeRef.current = time;
+    const stopLoop = startLoop((time, deltaMs) => {
+      const dt = Math.min(50, deltaMs);
 
       if (game.readyTimer > 0) {
         game.readyTimer -= dt;
         render(time);
-        frameRef.current = requestAnimationFrame(tick);
         return;
       }
 
@@ -695,12 +691,11 @@ const PacMan = () => {
           setLives(0);
           setScore(game.score);
           setStatus("lost");
-          return;
+          return false;
         }
         setLives(game.lives);
         resetPositions(game);
         render(time);
-        frameRef.current = requestAnimationFrame(tick);
         return;
       }
 
@@ -717,49 +712,34 @@ const PacMan = () => {
       setLevel(game.level);
 
       render(time);
-      frameRef.current = requestAnimationFrame(tick);
-    };
-
-    lastTimeRef.current = 0;
-    frameRef.current = requestAnimationFrame(tick);
+    });
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
+      stopLoop();
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [status]);
 
-  const overlayMessage = status === "lost" ? "Game over" : "Clear the maze, dodge the ghosts";
-  const buttonLabel = status === "idle" ? "Start Game" : "Play Again";
-
   return (
-    <div className={styles.pacMan}>
-      <h2>Pac-Man</h2>
-      <div className={styles.hud}>
-        <span>Level: {level}</span>
-        <span>Score: {score}</span>
-        <span>Lives: {lives}</span>
-      </div>
-      <div className={styles.canvasWrapper}>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_W}
-          height={CANVAS_H}
-          className={styles.canvas}
-        />
-        {status !== "playing" && (
-          <div className={styles.overlay}>
-            <p>{overlayMessage}</p>
-            <button type="button" className={styles.button} onClick={startGame}>
-              {buttonLabel}
-            </button>
-          </div>
-        )}
-      </div>
-      <p className={styles.instructions}>
-        Arrow keys / WASD to move · eat a power pellet to chase the ghosts
-      </p>
-    </div>
+    <GameFrame
+      title="Pac-Man"
+      className={styles.theme}
+      hud={[`Level: ${level}`, `Score: ${score}`, `Lives: ${lives}`]}
+      canvasRef={canvasRef}
+      width={CANVAS_W}
+      height={CANVAS_H}
+      overlay={
+        status === "playing"
+          ? null
+          : {
+              message:
+                status === "lost" ? "Game over" : "Clear the maze, dodge the ghosts",
+              buttonLabel: status === "idle" ? "Start Game" : "Play Again",
+              onClick: startGame,
+            }
+      }
+      instructions="Arrow keys / WASD to move · eat a power pellet to chase the ghosts"
+    />
   );
 };
 

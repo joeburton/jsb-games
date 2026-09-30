@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import GameFrame from "../shared/GameFrame";
+import { drawSprite, intersects } from "../shared/canvas";
+import { startLoop } from "../shared/loop";
 import styles from "./SpaceInvaders.module.css";
 
 const CANVAS_WIDTH = 480;
@@ -166,29 +169,6 @@ const createInvaders = (): Invader[] => {
   return invaders;
 };
 
-const drawSprite = (
-  ctx: CanvasRenderingContext2D,
-  sprite: string[],
-  x: number,
-  y: number,
-  pixelSize: number,
-  color: string,
-) => {
-  ctx.fillStyle = color;
-  sprite.forEach((spriteRow, rowIndex) => {
-    for (let col = 0; col < spriteRow.length; col++) {
-      if (spriteRow[col] === "1") {
-        ctx.fillRect(
-          x + col * pixelSize,
-          y + rowIndex * pixelSize,
-          pixelSize,
-          pixelSize,
-        );
-      }
-    }
-  });
-};
-
 const drawBullet = (
   ctx: CanvasRenderingContext2D,
   bullet: Bullet,
@@ -250,23 +230,10 @@ const createGameState = (): GameState => ({
   invaderFrame: 0,
 });
 
-const intersects = (
-  ax: number,
-  ay: number,
-  aw: number,
-  ah: number,
-  bx: number,
-  by: number,
-  bw: number,
-  bh: number,
-) => ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-
 const SpaceInvaders = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameRef = useRef<GameState>(createGameState());
   const keysRef = useRef<Set<string>>(new Set());
-  const frameRef = useRef<number>(0);
-  const lastTimeRef = useRef<number>(0);
 
   const [status, setStatus] = useState<GameStatus>("idle");
   const [score, setScore] = useState(0);
@@ -305,10 +272,7 @@ const SpaceInvaders = () => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
-    const tick = (time: number) => {
-      const delta = lastTimeRef.current ? time - lastTimeRef.current : 0;
-      lastTimeRef.current = time;
-
+    const stopLoop = startLoop((time, delta) => {
       const game = gameRef.current;
       const keys = keysRef.current;
 
@@ -492,7 +456,7 @@ const SpaceInvaders = () => {
 
       if (game.lives <= 0 || invadersReachedPlayer) {
         setStatus("lost");
-        return;
+        return false;
       }
       if (allInvadersDestroyed) {
         game.level += 1;
@@ -505,53 +469,35 @@ const SpaceInvaders = () => {
         game.enemyBullets = [];
         setLevel(game.level);
       }
-
-      frameRef.current = requestAnimationFrame(tick);
-    };
-
-    lastTimeRef.current = 0;
-    frameRef.current = requestAnimationFrame(tick);
+    });
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
+      stopLoop();
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, [status]);
 
-  const overlayMessage =
-    status === "lost" ? "Game over" : "Defend Earth from the invasion";
-
   return (
-    <div className={styles.spaceInvaders}>
-      <h2>Space Invaders</h2>
-      <div className={styles.hud}>
-        <span>Level: {level}</span>
-        <span>Score: {score}</span>
-        <span>Lives: {lives}</span>
-      </div>
-      <div className={styles.canvasWrapper}>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
-          className={styles.canvas}
-        />
-        {status !== "playing" && (
-          <div className={styles.overlay}>
-            <p>{overlayMessage}</p>
-            <button
-              type="button"
-              className={styles.button}
-              onClick={startGame}
-            >
-              {status === "idle" ? "Start Game" : "Play Again"}
-            </button>
-          </div>
-        )}
-      </div>
-      <p className={styles.instructions}>Use ← / → to move, Space to shoot</p>
-    </div>
+    <GameFrame
+      title="Space Invaders"
+      className={styles.theme}
+      hud={[`Level: ${level}`, `Score: ${score}`, `Lives: ${lives}`]}
+      canvasRef={canvasRef}
+      width={CANVAS_WIDTH}
+      height={CANVAS_HEIGHT}
+      overlay={
+        status === "playing"
+          ? null
+          : {
+              message:
+                status === "lost" ? "Game over" : "Defend Earth from the invasion",
+              buttonLabel: status === "idle" ? "Start Game" : "Play Again",
+              onClick: startGame,
+            }
+      }
+      instructions="Use ← / → to move, Space to shoot"
+    />
   );
 };
 

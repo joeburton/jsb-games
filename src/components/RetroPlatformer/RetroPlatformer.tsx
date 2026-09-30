@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import GameFrame from "../shared/GameFrame";
+import { drawSprite, intersects } from "../shared/canvas";
+import { startLoop } from "../shared/loop";
 import styles from "./RetroPlatformer.module.css";
 
 const TILE = 16;
@@ -278,17 +281,6 @@ const STARS = Array.from({ length: 70 }, (_, i) => ({
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
-const intersects = (
-  ax: number,
-  ay: number,
-  aw: number,
-  ah: number,
-  bx: number,
-  by: number,
-  bw: number,
-  bh: number,
-) => ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-
 const isSolid = (level: Level, col: number, row: number) => {
   if (col < 0 || col >= level.width) return true;
   if (row < 0 || row >= level.height) return false;
@@ -383,26 +375,6 @@ const createGameState = (level: Level): GameState => ({
   jumpPressed: false,
 });
 
-const drawPixels = (
-  ctx: CanvasRenderingContext2D,
-  sprite: string[],
-  x: number,
-  y: number,
-  pixelSize: number,
-  color: string,
-  flip: boolean,
-) => {
-  ctx.fillStyle = color;
-  for (let r = 0; r < sprite.length; r++) {
-    const row = sprite[r];
-    for (let c = 0; c < row.length; c++) {
-      if (row[c] !== "1") continue;
-      const drawCol = flip ? row.length - 1 - c : c;
-      ctx.fillRect(x + drawCol * pixelSize, y + r * pixelSize, pixelSize, pixelSize);
-    }
-  }
-};
-
 const drawTiles = (ctx: CanvasRenderingContext2D, level: Level, camX: number) => {
   const startCol = Math.max(0, Math.floor(camX / TILE));
   const endCol = Math.min(
@@ -492,8 +464,6 @@ const RetroPlatformer = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const gameRef = useRef<GameState>(createGameState(LEVELS[0]));
   const keysRef = useRef<Set<string>>(new Set());
-  const frameRef = useRef<number>(0);
-  const lastTimeRef = useRef<number>(0);
 
   const [status, setStatus] = useState<GameStatus>("idle");
   const [levelIndex, setLevelIndex] = useState(0);
@@ -529,7 +499,8 @@ const RetroPlatformer = () => {
 
     // Drop any keys still held from the previous screen (e.g. running into the
     // flag) so a new level doesn't start auto-scrolling until you tap that key.
-    keysRef.current.clear();
+    const heldKeys = keysRef.current;
+    heldKeys.clear();
     gameRef.current.jumpPressed = false;
 
     const level = LEVELS[levelIndex];
@@ -629,11 +600,8 @@ const RetroPlatformer = () => {
       }
     };
 
-    const tick = (time: number) => {
-      const frameDt = lastTimeRef.current
-        ? Math.min(0.05, (time - lastTimeRef.current) / 1000)
-        : 0;
-      lastTimeRef.current = time;
+    const stopLoop = startLoop((time, deltaMs) => {
+      const frameDt = Math.min(0.05, deltaMs / 1000);
 
       const keys = keysRef.current;
       const player = game.player;
@@ -707,7 +675,7 @@ const RetroPlatformer = () => {
           player.vy = STOMP_BOUNCE;
           game.score += 200;
         } else if (die()) {
-          return;
+          return false;
         } else {
           break;
         }
@@ -733,7 +701,7 @@ const RetroPlatformer = () => {
           }
         }
       }
-      if (hazard && die()) return;
+      if (hazard && die()) return false;
 
       const flagHitbox = {
         x: level.flag.x + TILE / 2 - 4,
@@ -757,7 +725,7 @@ const RetroPlatformer = () => {
         setScore(game.score);
         setLives(game.lives);
         setStatus(levelIndex < LEVELS.length - 1 ? "levelComplete" : "won");
-        return;
+        return false;
       }
 
       game.camX = clamp(
@@ -816,7 +784,7 @@ const RetroPlatformer = () => {
         if (!enemy.alive) continue;
         const ex = Math.round(enemy.x - camX);
         if (ex < -ENEMY_W * 2 || ex > CANVAS_WIDTH + ENEMY_W * 2) continue;
-        drawPixels(ctx, enemyFrame, ex, Math.round(enemy.y), 2, ENEMY_COLOR, enemy.dir < 0);
+        drawSprite(ctx, enemyFrame, ex, Math.round(enemy.y), 2, ENEMY_COLOR, enemy.dir < 0);
       }
 
       let playerSprite = PLAYER_IDLE;
@@ -825,7 +793,7 @@ const RetroPlatformer = () => {
       } else if (Math.abs(player.vx) > 1) {
         playerSprite = Math.floor(time / 90) % 2 === 0 ? PLAYER_RUN_A : PLAYER_RUN_B;
       }
-      drawPixels(
+      drawSprite(
         ctx,
         playerSprite,
         Math.round(player.x - camX),
@@ -834,20 +802,15 @@ const RetroPlatformer = () => {
         PLAYER_COLOR,
         player.facing < 0,
       );
-
-      frameRef.current = requestAnimationFrame(tick);
-    };
-
-    lastTimeRef.current = 0;
-    frameRef.current = requestAnimationFrame(tick);
+    });
 
     return () => {
-      cancelAnimationFrame(frameRef.current);
+      stopLoop();
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
       // Listeners are gone now, so a keyup during the between-levels overlay
       // would never be recorded — forget everything that was held.
-      keysRef.current.clear();
+      heldKeys.clear();
     };
   }, [status, levelIndex]);
 
@@ -875,40 +838,25 @@ const RetroPlatformer = () => {
   const handlePrimary = status === "levelComplete" ? nextLevel : startGame;
 
   return (
-    <div className={styles.retroPlatformer}>
-      <h2>Retro Platformer</h2>
-      <div className={styles.hud}>
-        <span>Stage {stageName}</span>
-        <span>
-          Coins: {coins}/{totalCoins}
-        </span>
-        <span>Score: {score}</span>
-        <span>Lives: {lives}</span>
-      </div>
-      <div className={styles.canvasWrapper}>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_WIDTH}
-          height={CANVAS_HEIGHT}
-          className={styles.canvas}
-        />
-        {status !== "playing" && (
-          <div className={styles.overlay}>
-            <p>{overlayMessage}</p>
-            <button
-              type="button"
-              className={styles.button}
-              onClick={handlePrimary}
-            >
-              {buttonLabel}
-            </button>
-          </div>
-        )}
-      </div>
-      <p className={styles.instructions}>
-        ← / → to move, Space / ↑ to jump, stomp critters from above
-      </p>
-    </div>
+    <GameFrame
+      title="Retro Platformer"
+      className={styles.theme}
+      hud={[
+        `Stage ${stageName}`,
+        `Coins: ${coins}/${totalCoins}`,
+        `Score: ${score}`,
+        `Lives: ${lives}`,
+      ]}
+      canvasRef={canvasRef}
+      width={CANVAS_WIDTH}
+      height={CANVAS_HEIGHT}
+      overlay={
+        status === "playing"
+          ? null
+          : { message: overlayMessage, buttonLabel, onClick: handlePrimary }
+      }
+      instructions="← / → to move, Space / ↑ to jump, stomp critters from above"
+    />
   );
 };
 
