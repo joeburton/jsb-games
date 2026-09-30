@@ -72,16 +72,17 @@ Open the URL Vite prints, mash the keyboard, have fun.
 - **React 19** + **TypeScript** + **Vite** — the app shell and tooling
 - **`<canvas>` + `requestAnimationFrame`** — every game is its own little render loop
 - **Redux Toolkit** + **react-redux** — wired up and ready (see the easter egg below)
-- **Vitest** + **Testing Library** — the tests that keep the maze walls standing
+- **Vitest** + **Testing Library** — tests for the Redux store and task list
 
 ---
 
 ## 🥚 Easter egg
 
 There's a fully working little **task manager** hiding in `src/components`
-(`TaskList`, `AddTask`, `TaskFilter`, `TaskSummary`) backed by a Redux store. It's
-commented out in [src/App.tsx](src/App.tsx) — swap the imports back in if you'd
-rather organize your day than save the galaxy. We won't judge. Much.
+(`TaskList`, `AddTask`, `TaskFilter`, `TaskSummary`) backed by a Redux store. It
+isn't wired into any route — import the components into
+[src/App.tsx](src/App.tsx) if you'd rather organise your day than save the
+galaxy. We won't judge. Much.
 
 ---
 
@@ -99,6 +100,7 @@ src/
 │   ├── SpaceInvaders/      # 👾
 │   ├── RetroPlatformer/    # 🍄
 │   ├── PacMan/             # 🟡
+│   ├── shared/             # GameFrame (HUD + overlay), rAF loop, sprite/collision helpers
 │   └── TaskList, AddTask…  # 🥚 the hidden productivity app
 ├── store/                  # Redux Toolkit slices + selectors
 └── data/                   # seed data
