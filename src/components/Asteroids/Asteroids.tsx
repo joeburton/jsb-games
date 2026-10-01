@@ -8,9 +8,10 @@ const CANVAS_HEIGHT = 360;
 
 const SHIP_RADIUS = 10;
 const TURN_SPEED = 4.2; // radians per second
-const THRUST = 260; // px per second^2
-const DRAG = 0.55; // fraction of velocity shed per second
-const MAX_SHIP_SPEED = 300; // px per second
+const THRUST = 150; // px per second^2
+const DRAG = 1.1; // exponential drag rate per second
+const BRAKE_DRAG = 4; // extra drag rate while braking
+const MAX_SHIP_SPEED = 190; // px per second
 const INVULNERABLE_TIME = 2.2; // seconds after (re)spawning
 const HYPERSPACE_COOLDOWN = 1.5; // seconds
 
@@ -297,6 +298,8 @@ const Asteroids = () => {
       "KeyA",
       "KeyS",
       "KeyD",
+      "ShiftLeft",
+      "ShiftRight",
     ]);
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -358,7 +361,8 @@ const Asteroids = () => {
           ship.vx += Math.sin(ship.angle) * THRUST * dt;
           ship.vy -= Math.cos(ship.angle) * THRUST * dt;
         }
-        const drag = Math.exp(-DRAG * dt);
+        const braking = keys.has("ArrowDown") || keys.has("KeyS");
+        const drag = Math.exp(-(DRAG + (braking ? BRAKE_DRAG : 0)) * dt);
         ship.vx *= drag;
         ship.vy *= drag;
         const speed = Math.hypot(ship.vx, ship.vy);
@@ -388,7 +392,7 @@ const Asteroids = () => {
         }
 
         if (
-          (keys.has("ArrowDown") || keys.has("KeyS")) &&
+          (keys.has("ShiftLeft") || keys.has("ShiftRight")) &&
           game.hyperspaceCooldown === 0
         ) {
           game.hyperspaceCooldown = HYPERSPACE_COOLDOWN;
@@ -550,7 +554,7 @@ const Asteroids = () => {
               onClick: startGame,
             }
       }
-      instructions="← / → to rotate, ↑ to thrust, Space to fire, ↓ for hyperspace"
+      instructions="← / → to rotate, ↑ to thrust, ↓ to brake, Space to fire, Shift for hyperspace"
     />
   );
 };

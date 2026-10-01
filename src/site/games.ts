@@ -114,7 +114,7 @@ export const GAMES: GameMeta[] = [
     emoji: "☄️",
     tagline: "A lone ship, a drifting rock field and a very twitchy trigger finger.",
     blurb:
-      "Big rocks split into medium ones, medium into small, small into dust. There's no brake, so every burst of thrust stays with you. Each wave brings more rocks and faster drift, and every 10,000 points earns a spare ship.",
+      "Big rocks split into medium ones, medium into small, small into dust. Momentum carries you, so feather the thrust and lean on the brake. Each wave brings more rocks and faster drift, and every 10,000 points earns a spare ship.",
     accent: "#ff3db0",
     glow: "rgba(255, 61, 176, 0.55)",
     year: "1979",
@@ -124,11 +124,12 @@ export const GAMES: GameMeta[] = [
     controls: [
       { keys: "← →  /  A D", action: "Rotate" },
       { keys: "↑ / W", action: "Thrust" },
+      { keys: "↓ / S", action: "Brake" },
       { keys: "Space", action: "Fire" },
-      { keys: "↓ / S", action: "Hyperspace" },
+      { keys: "Shift", action: "Hyperspace" },
     ],
     tips: [
-      "Tap thrust in short bursts; there's no brake, only drag.",
+      "Tap thrust in short bursts and brake before you drift into trouble.",
       "Shatter the big rocks early, before the fragments fill the sky.",
       "Hyperspace is a panic button. You might land somewhere worse.",
     ],
