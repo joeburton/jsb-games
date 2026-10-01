@@ -14,7 +14,7 @@ Insert coin. No coin? That's fine, it's free. 🪙
 | 👾 **Space Invaders** | Rows of wiggling aliens march toward Earth and it's just you and a laser cannon. Clear a wave, the next one comes faster and shoots meaner. | `←` `→` move · `Space` shoot |
 | 🍄 **Retro Platformer** | Run, jump, stomp, collect coins, reach the flag. Coyote-time and jump-buffering included so the platforming actually feels good. | `←` `→` / `A` `D` move · `Space` / `↑` / `W` jump |
 | 🟡 **Pac-Man** | Eat every pellet, dodge four ghosts with real scatter/chase personalities, and munch a power pellet to turn the tables. | Arrow keys / `WASD` move |
-| ☄️ **Asteroids** | Rotate, thrust and blast a drifting rock field into ever-smaller pieces, with a brake for tight spots and a hyperspace panic button. | `←` `→` rotate · `↑` thrust · `↓` brake · `Space` fire · `Shift` hyperspace |
+| ☄️ **Asteroids** | Rotate, thrust and blast a drifting rock field into ever-smaller pieces, with reverse thrust for tight spots and a hyperspace panic button. | `←` `→` rotate · `↑` `↓` thrust forward / back · `Space` fire · `Shift` hyperspace |
 
 Every game keeps a **level counter** that ratchets up the difficulty, gives you
 **3 lives**, and drops a big **restart button** on the game-over screen. Pixel art

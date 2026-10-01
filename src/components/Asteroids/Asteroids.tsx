@@ -10,7 +10,6 @@ const SHIP_RADIUS = 10;
 const TURN_SPEED = 4.2; // radians per second
 const THRUST = 150; // px per second^2
 const DRAG = 1.1; // exponential drag rate per second
-const BRAKE_DRAG = 4; // extra drag rate while braking
 const MAX_SHIP_SPEED = 190; // px per second
 const INVULNERABLE_TIME = 2.2; // seconds after (re)spawning
 const HYPERSPACE_COOLDOWN = 1.5; // seconds
@@ -47,7 +46,8 @@ interface Ship {
   vy: number;
   angle: number; // 0 points up
   invulnerable: number;
-  thrusting: boolean;
+  /** 1 thrusting forward, -1 in reverse, 0 coasting. */
+  thrust: 1 | 0 | -1;
 }
 
 interface Bullet {
@@ -118,7 +118,7 @@ const createShip = (): Ship => ({
   vy: 0,
   angle: 0,
   invulnerable: INVULNERABLE_TIME,
-  thrusting: false,
+  thrust: 0,
 });
 
 const createRock = (
@@ -212,15 +212,24 @@ const drawShip = (ctx: CanvasRenderingContext2D, ship: Ship, time: number) => {
   ctx.lineWidth = 1.6;
   ctx.lineJoin = "round";
 
-  if (ship.thrusting) {
+  if (ship.thrust !== 0) {
     const flicker = rand(0.7, 1.25);
     ctx.strokeStyle = FLAME_COLOR;
     ctx.shadowColor = FLAME_COLOR;
     ctx.shadowBlur = 10;
     ctx.beginPath();
-    ctx.moveTo(-SHIP_RADIUS * 0.45, SHIP_RADIUS * 0.7);
-    ctx.lineTo(0, SHIP_RADIUS * (0.8 + flicker));
-    ctx.lineTo(SHIP_RADIUS * 0.45, SHIP_RADIUS * 0.7);
+    if (ship.thrust > 0) {
+      // Main engine out of the tail.
+      ctx.moveTo(-SHIP_RADIUS * 0.45, SHIP_RADIUS * 0.7);
+      ctx.lineTo(0, SHIP_RADIUS * (0.8 + flicker));
+      ctx.lineTo(SHIP_RADIUS * 0.45, SHIP_RADIUS * 0.7);
+    } else {
+      // Retro jets either side of the nose.
+      for (const side of [-1, 1]) {
+        ctx.moveTo(side * SHIP_RADIUS * 0.3, -SHIP_RADIUS * 0.6);
+        ctx.lineTo(side * SHIP_RADIUS * 0.45, -SHIP_RADIUS * (0.9 + flicker * 0.6));
+      }
+    }
     ctx.stroke();
   }
 
@@ -356,13 +365,12 @@ const Asteroids = () => {
         const right = keys.has("ArrowRight") || keys.has("KeyD");
         ship.angle += ((right ? 1 : 0) - (left ? 1 : 0)) * TURN_SPEED * dt;
 
-        ship.thrusting = keys.has("ArrowUp") || keys.has("KeyW");
-        if (ship.thrusting) {
-          ship.vx += Math.sin(ship.angle) * THRUST * dt;
-          ship.vy -= Math.cos(ship.angle) * THRUST * dt;
-        }
-        const braking = keys.has("ArrowDown") || keys.has("KeyS");
-        const drag = Math.exp(-(DRAG + (braking ? BRAKE_DRAG : 0)) * dt);
+        const forward = keys.has("ArrowUp") || keys.has("KeyW");
+        const reverse = keys.has("ArrowDown") || keys.has("KeyS");
+        ship.thrust = ((forward ? 1 : 0) - (reverse ? 1 : 0)) as 1 | 0 | -1;
+        ship.vx += Math.sin(ship.angle) * THRUST * ship.thrust * dt;
+        ship.vy -= Math.cos(ship.angle) * THRUST * ship.thrust * dt;
+        const drag = Math.exp(-DRAG * dt);
         ship.vx *= drag;
         ship.vy *= drag;
         const speed = Math.hypot(ship.vx, ship.vy);
@@ -554,7 +562,7 @@ const Asteroids = () => {
               onClick: startGame,
             }
       }
-      instructions="← / → to rotate, ↑ to thrust, ↓ to brake, Space to fire, Shift for hyperspace"
+      instructions="← / → to rotate, ↑ / ↓ to thrust forward / back, Space to fire, Shift for hyperspace"
     />
   );
 };
